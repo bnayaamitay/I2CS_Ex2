@@ -1,4 +1,4 @@
-package assignments.Ex2;
+package assignments;
 
 /**
  * Intro2CS_2026A

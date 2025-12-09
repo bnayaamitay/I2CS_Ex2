@@ -1,4 +1,4 @@
-package assignments.Ex2;
+package assignments;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
