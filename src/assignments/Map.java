@@ -9,7 +9,10 @@ import java.io.Serializable;
  */
 public class Map implements Map2D, Serializable{
 
-    // edit this class below
+    private int[][] _map;
+    private int _h;
+    private int _w;
+
 	/**
 	 * Constructs a w*h 2D raster map with an init value v.
 	 * @param w
@@ -30,57 +33,110 @@ public class Map implements Map2D, Serializable{
 	public Map(int[][] data) {
 		init(data);
 	}
+
 	@Override
 	public void init(int w, int h, int v) {
-
+    if ( w<= 0 || h <= 0) {
+        throw new IllegalArgumentException("Invalid width or height");
+    }
+    _w = w;
+    _h = h;
+    _map = new int[w][h];
+    for (int i = 0; i < w; i++) {
+        for (int j = 0; j < h; j++) {
+            _map[i][j] = v;
+        }
+    }
 	}
+
 	@Override
 	public void init(int[][] arr) {
-
+    if (arr == null || arr.length == 0 || arr[0].length == 0 ) {
+        throw new IllegalArgumentException("Array is null or empty");
+    }
+    _w = arr.length;
+    _h = arr[0].length;
+    _map = new int[_w][_h];
+    for (int i = 0; i < _w; i++) {
+        if (arr[i].length != _h) {
+            throw new IllegalArgumentException("Array is ragged");
+        }
+        for (int j = 0; j < _h; j++) {
+            _map[i][j] = arr[i][j];
+        }
+    }
 	}
+
 	@Override
 	public int[][] getMap() {
 		int[][] ans = null;
-
+        ans = new int[_w][_h];
+        for (int i = 0; i < _w; i++) {
+            for (int j = 0; j < _h; j++) {
+            ans[i][j] = _map[i][j];
+            }
+        }
 		return ans;
 	}
+
 	@Override
 	public int getWidth() {
         int ans = -1;
-
+        ans = _w;
         return ans;
     }
+
 	@Override
 	public int getHeight() {
         int ans = -1;
-
+        ans = _h;
         return ans;
     }
+
 	@Override
 	public int getPixel(int x, int y) {
         int ans = -1;
-
+        if (x < 0 || y < 0 || x >= _w || y >= _h) {
+            throw new IndexOutOfBoundsException("Coordinate ("+ x + "," + y + ") out of bounds");
+        }
+        ans = _map[x][y];
         return ans;
     }
+
 	@Override
 	public int getPixel(Pixel2D p) {
         int ans = -1;
-
+        ans = _map[p.getX()][p.getY()];
         return ans;
 	}
+
 	@Override
 	public void setPixel(int x, int y, int v) {
-
+        if (x < 0 || y < 0 || x >= _w || y >= _h) {
+            throw new IndexOutOfBoundsException("Coordinate ("+ x + "," + y + ") out of bounds");
+        }
+        _map[x][y] = v;
     }
+
 	@Override
 	public void setPixel(Pixel2D p, int v) {
-
+        int x = p.getX();
+        int y = p.getY();
+        if (x < 0 || y < 0 || x >= _w || y >= _h) {
+            throw new IndexOutOfBoundsException("Coordinate ("+ x + "," + y + ") out of bounds");
+        }
+        _map[x][y] = v;
 	}
 
     @Override
     public boolean isInside(Pixel2D p) {
         boolean ans = true;
-
+        if (p == null) {
+            ans = false;
+        }
+        if (p.getX() < 0 || p.getY() < 0 || p.getX() >= _w || p.getY() >= _h) {
+            ans = false;
+        }
         return ans;
     }
 
