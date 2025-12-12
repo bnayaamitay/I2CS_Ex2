@@ -143,23 +143,47 @@ public class Map implements Map2D, Serializable{
     @Override
     public boolean sameDimensions(Map2D p) {
         boolean ans = false;
-
+        if (p != null && p.getWidth() == _w && p.getHeight() == _h) {
+            ans = true;
+        }
         return ans;
     }
 
     @Override
     public void addMap2D(Map2D p) {
-
+    if (sameDimensions(p)) {
+        for (int i = 0; i < _w; i++) {
+            for (int j = 0; j < _h; j++) {
+                setPixel(i, j,getPixel(i,j) + p.getPixel(i, j));
+            }
+        }
+    }
     }
 
     @Override
     public void mul(double scalar) {
-
+        for (int i = 0; i < _w; i++) {
+        for (int j = 0; j < _h; j++) {
+        setPixel(i, j,(int)(getPixel(i,j) * scalar));
+        }
+    }
     }
 
     @Override
     public void rescale(double sx, double sy) {
-
+    int newW = (int) (_w * sx);
+    int newH = (int) (_h * sy);
+    int[][] newMap = new int[newW][newH];
+    for (int i = 0; i < newW; i++) {
+        for (int j = 0; j < newH; j++) {
+            int oldI = (int) (i/sx);
+            int oldJ = (int) (j/sy);
+            newMap[i][j] = _map[oldI][oldJ];
+        }
+    }
+    _w = newW;
+    _h = newH;
+    _map = newMap;
     }
 
     @Override
