@@ -1,5 +1,8 @@
 package assignments;
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * This class represents a 2D map (int[w][h]) as a "screen" or a raster matrix or maze over integers.
  * This is the main class needed to be implemented.
@@ -188,25 +191,100 @@ public class Map implements Map2D, Serializable{
 
     @Override
     public void drawCircle(Pixel2D center, double rad, int color) {
-
+    for (int i = 0; i <_w; i++) {
+        for (int j = 0; j < _h; j++) {
+            double dx = i - center.getX();
+            double dy = j - center.getY();
+            double distance = dx*dx + dy*dy;
+            if (distance < rad*rad) {
+                setPixel(i,j,color);
+            }
+        }
+    }
     }
 
     @Override
     public void drawLine(Pixel2D p1, Pixel2D p2, int color) {
-
+    int dx = Math.abs(p1.getX() - p2.getX());
+    int dy = Math.abs(p1.getY() - p2.getY());
+        if (p1.getX() == p2.getX()) {
+            int y1 = Math.min(p1.getY(), p2.getY());
+            int y2 = Math.max(p1.getY(), p2.getY());
+            for (int y = y1; y <= y2; y++) {
+                setPixel(p1.getX(), y, color);
+            }
+            return;
+        }
+        if (p1.getY() == p2.getY()) {
+            int x1 = Math.min(p1.getX(), p2.getX());
+            int x2 = Math.max(p1.getX(), p2.getX());
+            for (int x = x1; x <= x2; x++) {
+                setPixel(x, p1.getY(), color);
+            }
+            return;
+        }
+        if (dx >= dy) {
+        int x1 = Math.min(p1.getX(), p2.getX());
+        int x2 = Math.max(p2.getX(), p1.getX());
+        double m = (double) ((p1.getY() - p2.getY())) / (p1.getX() - p2.getX());
+        double b = p1.getY() -(p1.getX() * m);
+        for (int x = x1; x <= x2; x++) {
+            int y = (int) Math.round(x * m + b);
+            setPixel(x,y,color);
+        }
+    }
+    else {
+        int y1 = Math.min(p1.getY(), p2.getY());
+        int y2 = Math.max(p1.getY(), p2.getY());
+        double m = (double) (p2.getX() - p1.getX()) / (p2.getY() - p1.getY());
+        double b = p1.getX() - m * p1.getY();
+        for (int y = y1; y <= y2; y++) {
+            int x = (int) Math.round(m * y + b);
+            setPixel(x, y, color);
+        }
+    }
     }
 
     @Override
     public void drawRect(Pixel2D p1, Pixel2D p2, int color) {
-
+    int minX = Math.min(p1.getX(), p2.getX());
+    int maxX = Math.max(p1.getX(), p2.getX());
+    int minY = Math.min(p1.getY(), p2.getY());
+    int maxY = Math.max(p1.getY(), p2.getY());
+    for (int y = minY; y <= maxY; y++) {
+        for (int x = minX; x <= maxX; x++) {
+            setPixel(x, y,color);
+        }
+    }
     }
 
     @Override
     public boolean equals(Object ob) {
         boolean ans = false;
-
+        if (this == ob) {
+            ans = true;
+            return ans;
+        }
+        else if (ob == null || !(ob instanceof Map2D)) {
+            return ans;
+        }
+        else {
+            Map2D map = (Map2D) ob;
+            if (!sameDimensions(map)) {
+                return ans;
+            }
+            for (int x = 0; x < _w; x++) {
+                for (int y = 0; y < _h; y++) {
+                        if (this.getPixel(x,y) != map.getPixel(x,y)) {
+                            return ans;
+                        }
+                    }
+                }
+        }
+        ans = true;
         return ans;
     }
+
 	@Override
 	/** 
 	 * Fills this map with the new color (new_v) starting from p.
@@ -214,8 +292,40 @@ public class Map implements Map2D, Serializable{
 	 */
 	public int fill(Pixel2D xy, int new_v,  boolean cyclic) {
 		int ans = -1;
-
-		return ans;
+        if (!isInside(xy)) {
+            return ans;
+        }
+        ans = 0;
+        if (getPixel(xy.getX(), xy.getY()) == new_v) {
+            return ans;
+        }
+        int old_v = getPixel(xy.getX(), xy.getY());
+        Queue<Pixel2D> pendingP = new LinkedList<>();
+        pendingP.add(xy);
+        setPixel(xy.getX(), xy.getY(), new_v);
+        ans ++;
+        int [] dx = {1,-1,0,0};
+        int [] dy = {0,0,1,-1};
+        while (!pendingP.isEmpty()) {
+            Pixel2D current = pendingP.poll();
+            int cx = current.getX();
+            int cy = current.getY();
+            for (int i = 0; i < 4; i++) {
+                int nx = cx + dx[i];
+                int ny = cy + dy[i];
+                if (cyclic) {
+                    nx = (nx + _w) % _w;
+                    ny = (ny + _h) % _h;
+                }
+                Pixel2D neighbor = new Index2D(nx, ny);
+                if (isInside(neighbor) && getPixel(nx, ny) == old_v) {
+                    setPixel(nx, ny, new_v);
+                    pendingP.add(neighbor);
+                    ans++;
+                }
+            }
+        }
+        return ans;
 	}
 
 	@Override
