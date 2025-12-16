@@ -37,9 +37,13 @@ public class Map implements Map2D, Serializable{
 		init(data);
 	}
 
+    public Map() {
+        this(1,1,0);
+    }
+
 	@Override
 	public void init(int w, int h, int v) {
-    if ( w<= 0 || h <= 0) {
+    if (w <= 0 || h <= 0) {
         throw new IllegalArgumentException("Invalid width or height");
     }
     _w = w;
@@ -84,16 +88,12 @@ public class Map implements Map2D, Serializable{
 
 	@Override
 	public int getWidth() {
-        int ans = -1;
-        ans = _w;
-        return ans;
+        return _w;
     }
 
 	@Override
 	public int getHeight() {
-        int ans = -1;
-        ans = _h;
-        return ans;
+        return _h;
     }
 
 	@Override
@@ -109,7 +109,8 @@ public class Map implements Map2D, Serializable{
 	@Override
 	public int getPixel(Pixel2D p) {
         int ans = -1;
-        ans = _map[p.getX()][p.getY()];
+        if (p == null) throw new IllegalArgumentException("Pixel cannot be null");
+        ans = getPixel(p.getX(), p.getY());
         return ans;
 	}
 
@@ -334,7 +335,19 @@ public class Map implements Map2D, Serializable{
 	 * https://en.wikipedia.org/wiki/Breadth-first_search
 	 */
 	public Pixel2D[] shortestPath(Pixel2D p1, Pixel2D p2, int obsColor, boolean cyclic) {
-		Pixel2D[] ans = null;  // the result.
+		Pixel2D[] ans = null;
+        if (!isInside(p1) || !isInside(p2)) {
+            return ans;
+        }
+        if (p1.equals(p2)) {
+            ans = new Pixel2D[1];
+            ans[0] = p1;
+            return ans;
+        }
+        if (getPixel(p1.getX(), p1.getY()) == obsColor || getPixel(p2.getX(), p2.getY()) == obsColor) {
+            return ans;
+        }
+        int[][] distances = new int[_w][_h];
 
 		return ans;
 	}
