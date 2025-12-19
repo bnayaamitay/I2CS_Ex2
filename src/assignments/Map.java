@@ -348,12 +348,96 @@ public class Map implements Map2D, Serializable{
             return ans;
         }
         int[][] distances = new int[_w][_h];
-
+        for (int i = 0; i < _w; i++) {
+            for (int j = 0; j < _h; j++) {
+                distances[i][j] = -1;
+            }
+        }
+        distances[p1.getX()][p1.getY()] = 0;
+        Queue<Pixel2D> pendingP = new LinkedList<>();
+        pendingP.add(p1);
+        int[] dx = {1,-1,0,0};
+        int[] dy = {0,0,1,-1};
+        while (!pendingP.isEmpty()) {
+            Pixel2D current = pendingP.poll();
+            if (current.equals(p2)) {
+                break;
+            }
+            int cx = current.getX();
+            int cy = current.getY();
+            for (int i = 0; i < 4; i++) {
+                int nx = cx + dx[i];
+                int ny = cy + dy[i];
+                if (cyclic) {
+                    nx = (nx + _w) % _w;
+                    ny = (ny + _h) % _h;
+                }
+                Pixel2D neighbor = new Index2D(nx, ny);
+                if (isInside(neighbor) && getPixel(nx, ny) != obsColor && distances[nx][ny] == -1) {
+                    distances[nx][ny] = distances[cx][cy] + 1;
+                    pendingP.add(neighbor);
+                }
+            }
+        }
+        if (distances[p2.getX()][p2.getY()] == -1) {
+            return ans;
+        }
+        int dist = distances[p2.getX()][p2.getY()];
+        ans = new Pixel2D[dist + 1];
+        Pixel2D currentBack = p2;
+        ans[dist] = p2;
+        for (int i = dist - 1; i >= 0; i--) {
+            int cx = currentBack.getX();
+            int cy = currentBack.getY();
+            for (int k = 0; k < 4; k++) {
+                int nx = cx + dx[k];
+                int ny = cy + dy[k];
+                if (cyclic) {
+                    nx = (nx + _w) % _w;
+                    ny = (ny + _h) % _h;
+                }
+                if (isInside(new Index2D(nx, ny)) && distances[nx][ny] == i) {
+                    ans[i] = new Index2D(nx, ny);
+                    currentBack = ans[i];
+                    break;
+                }
+            }
+        }
 		return ans;
 	}
+
     @Override
     public Map2D allDistance(Pixel2D start, int obsColor, boolean cyclic) {
-        Map2D ans = null;  // the result.
+        Map2D ans = null;
+        if (!isInside(start) || getPixel(start) == obsColor) {
+            return ans;
+        }
+        ans = new Map(_w, _h, -1);
+        ans.setPixel(start, 0);
+        Queue<Pixel2D> pendingP = new LinkedList<>();
+        pendingP.add(start);
+        int[] dx = {1, -1, 0, 0};
+        int[] dy = {0, 0, 1, -1};
+        while (!pendingP.isEmpty()) {
+            Pixel2D current = pendingP.poll();
+            int cx = current.getX();
+            int cy = current.getY();
+            for (int i = 0; i < 4; i++) {
+                int nx = cx + dx[i];
+                int ny = cy + dy[i];
+                if (cyclic) {
+                    nx = (nx + _w) % _w;
+                    ny = (ny + _h) % _h;
+                }
+                Pixel2D neighbor = new Index2D(nx, ny);
+                if (isInside(neighbor) && getPixel(nx, ny) != obsColor && ans.getPixel(neighbor) == -1) {
+                    int dist = ans.getPixel(current.getX(), current.getY()) + 1;
+                    ans.setPixel(neighbor, dist);
+                    pendingP.add(neighbor);
+                }
+            }
+
+        }
 
         return ans;
     }
