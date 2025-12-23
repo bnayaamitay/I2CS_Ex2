@@ -80,7 +80,7 @@ public class Map implements Map2D, Serializable{
         ans = new int[_w][_h];
         for (int i = 0; i < _w; i++) {
             for (int j = 0; j < _h; j++) {
-            ans[i][j] = _map[i][j];
+                ans[i][j] = _map[i][j];
             }
         }
 		return ans;
@@ -167,10 +167,10 @@ public class Map implements Map2D, Serializable{
     @Override
     public void mul(double scalar) {
         for (int i = 0; i < _w; i++) {
-        for (int j = 0; j < _h; j++) {
-        setPixel(i, j,(int)(getPixel(i,j) * scalar));
+            for (int j = 0; j < _h; j++) {
+                setPixel(i, j,(int)(getPixel(i,j) * scalar));
+            }
         }
-    }
     }
 
     @Override
@@ -206,44 +206,40 @@ public class Map implements Map2D, Serializable{
 
     @Override
     public void drawLine(Pixel2D p1, Pixel2D p2, int color) {
-    int dx = Math.abs(p1.getX() - p2.getX());
-    int dy = Math.abs(p1.getY() - p2.getY());
-        if (p1.getX() == p2.getX()) {
-            int y1 = Math.min(p1.getY(), p2.getY());
-            int y2 = Math.max(p1.getY(), p2.getY());
+    int x1 = Math.min(p1.getX(), p2.getX());
+    int x2 = Math.max(p2.getX(), p1.getX());
+    int y1 = Math.min(p1.getY(), p2.getY());
+    int y2 = Math.max(p2.getY(), p1.getY());
+    int dx = Math.abs(x2 - x1);
+    int dy = Math.abs(y2 - y1);
+        if (x1 == x2) {
             for (int y = y1; y <= y2; y++) {
                 setPixel(p1.getX(), y, color);
             }
             return;
         }
-        if (p1.getY() == p2.getY()) {
-            int x1 = Math.min(p1.getX(), p2.getX());
-            int x2 = Math.max(p1.getX(), p2.getX());
+        if (y2 == y1) {
             for (int x = x1; x <= x2; x++) {
                 setPixel(x, p1.getY(), color);
             }
             return;
         }
         if (dx >= dy) {
-        int x1 = Math.min(p1.getX(), p2.getX());
-        int x2 = Math.max(p2.getX(), p1.getX());
-        double m = (double) ((p1.getY() - p2.getY())) / (p1.getX() - p2.getX());
-        double b = p1.getY() -(p1.getX() * m);
-        for (int x = x1; x <= x2; x++) {
-            int y = (int) Math.round(x * m + b);
-            setPixel(x,y,color);
+            double m = (double) ((p1.getY() - p2.getY())) / (p1.getX() - p2.getX());
+            double b = p1.getY() - (p1.getX() * m);
+            for (int x = x1; x <= x2; x++) {
+                int y = (int) Math.round(x * m + b);
+                setPixel(x,y,color);
+            }
         }
-    }
-    else {
-        int y1 = Math.min(p1.getY(), p2.getY());
-        int y2 = Math.max(p1.getY(), p2.getY());
-        double m = (double) (p2.getX() - p1.getX()) / (p2.getY() - p1.getY());
-        double b = p1.getX() - m * p1.getY();
-        for (int y = y1; y <= y2; y++) {
-            int x = (int) Math.round(m * y + b);
-            setPixel(x, y, color);
+        else {
+            double m = (double) (p2.getX() - p1.getX()) / (p2.getY() - p1.getY());
+            double b = p1.getX() - m * p1.getY();
+            for (int y = y1; y <= y2; y++) {
+                int x = (int) Math.round(m * y + b);
+                setPixel(x, y, color);
+            }
         }
-    }
     }
 
     @Override
@@ -436,9 +432,7 @@ public class Map implements Map2D, Serializable{
                     pendingP.add(neighbor);
                 }
             }
-
         }
-
         return ans;
     }
 	////////////////////// Private Methods ///////////////////////
