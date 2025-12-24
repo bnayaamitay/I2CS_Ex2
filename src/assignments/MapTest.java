@@ -20,6 +20,7 @@ class MapTest {
         _m1 = new Map();
         _m3_3 = new Map(_map_3_3);
     }
+
     @Test
     @Timeout(value = 1, unit = SECONDS)
     void init() {
@@ -37,6 +38,7 @@ class MapTest {
         _m1.init(_map_3_3);
         assertEquals(_m0, _m1);
     }
+
     @Test
     void testEquals() {
         assertEquals(_m0,_m1);

@@ -30,8 +30,8 @@ public class Index2D implements Pixel2D {
         if (p2 == null) throw new RuntimeException("Pixel2D is null");
         double dx = p2.getX() - _x;
         double dy = p2.getY() - _y;
-        double d = Math.sqrt(dx * dx + dy * dy);
-        return d;
+        double dist = Math.sqrt((dx * dx) + (dy * dy));
+        return dist;
     }
 
     @Override
