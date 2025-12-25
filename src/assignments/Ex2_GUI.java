@@ -309,30 +309,56 @@ public class Ex2_GUI {
         double mergeY = saveY - 0.75;
         double rescaleY = mergeY - 0.75;
         double newY = rescaleY - 0.75;
+
         drawButton(menuX, saveY, "Save", Color.BLACK, w);
         drawButton(menuX, mergeY, "Merge", Color.BLACK, w);
         drawButton(menuX, rescaleY, "Rescale", Color.BLACK, w);
         drawButton(menuX, newY, "New", Color.BLACK, w);
+
         StdDraw.show();
         while (StdDraw.mousePressed()) { StdDraw.pause(20); }
+
         boolean selectionMade = false;
         while (!selectionMade) {
             if (StdDraw.mousePressed()) {
                 double x = StdDraw.mouseX();
                 double y = StdDraw.mouseY();
+
+                // --- SAVE ---
                 if (isInside(x, y, menuX, saveY, btnHalfW, btnHalfH)) {
-                    System.out.println("Saved!"); selectionMade = true;
+                    saveMap(map, "map.txt"); // שומר לקובץ ברירת מחדל
+                    System.out.println("Saved to map.txt!");
+                    selectionMade = true;
                 }
+
+                // --- MERGE (התיקון כאן) ---
                 else if (isInside(x, y, menuX, mergeY, btnHalfW, btnHalfH)) {
-                    System.out.println("Merge!"); selectionMade = true;
+                    System.out.println("Merge clicked!");
+                    // 1. טוענים מפה נוספת (כרגע הגדרתי את map.txt, אתה יכול לשנות)
+                    Map2D mapToMerge = loadMap("map.txt");
+                    // 2. מבצעים את האיחוד
+                    map.addMap2D(mapToMerge);
+                    System.out.println("Merged with map.txt successfully!");
+                    selectionMade = true;
                 }
+
+                // --- RESCALE ---
                 else if (isInside(x, y, menuX, rescaleY, btnHalfW, btnHalfH)) {
-                    inputAndRescale(map, w, h); selectionMade = true;
+                    inputAndRescale(map, w, h);
+                    selectionMade = true;
                 }
+
+                // --- NEW ---
                 else if (isInside(x, y, menuX, newY, btnHalfW, btnHalfH)) {
-                    map.mul(0); selectionMade = true;
+                    map.mul(0); // מאפס את המפה
+                    selectionMade = true;
                 }
-                else { selectionMade = true; }
+
+                // --- Clicked Outside ---
+                else {
+                    selectionMade = true;
+                }
+
                 while (StdDraw.mousePressed()) { StdDraw.pause(10); }
             }
             StdDraw.pause(20);

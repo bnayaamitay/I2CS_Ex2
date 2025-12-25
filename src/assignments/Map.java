@@ -275,8 +275,8 @@ public class Map implements Map2D, Serializable{
                         if (this.getPixel(x,y) != map.getPixel(x,y)) {
                             return ans;
                         }
-                    }
                 }
+            }
         }
         ans = true;
         return ans;
