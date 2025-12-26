@@ -3,6 +3,8 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Queue;
 
+//Student ID: 213741051
+
 /**
  * This class represents a 2D map (int[w][h]) as a "screen" or a raster matrix or maze over integers.
  * This is the main class needed to be implemented.
@@ -18,25 +20,28 @@ public class Map implements Map2D, Serializable{
 
 	/**
 	 * Constructs a w*h 2D raster map with an init value v.
-	 * @param w
-	 * @param h
-	 * @param v
+     * @param w width
+     * @param h height
+     * @param v initial value
 	 */
 	public Map(int w, int h, int v) {init(w, h, v);}
 	/**
 	 * Constructs a square map (size*size).
-	 * @param size
+	 * @param size map dimension
 	 */
 	public Map(int size) {this(size,size, 0);}
 	
 	/**
-	 * Constructs a map from a given 2D array.
-	 * @param data
+	 * Constructs a map from a given 2D array (Deep Copy).
+	 * @param data source array
 	 */
 	public Map(int[][] data) {
 		init(data);
 	}
 
+    /**
+     * Constructs a default 1x1 map with value 0.
+     */
     public Map() {
         this(1,1,0);
     }
@@ -57,6 +62,11 @@ public class Map implements Map2D, Serializable{
 	}
 
 	@Override
+    /**
+     * Initializes the map from a 2D array.
+     * Throws RuntimeException if the array is null, empty, or jagged.
+     * Creates a deep copy of the data.
+     */
 	public void init(int[][] arr) {
     if (arr == null || arr.length == 0 || arr[0].length == 0 ) {
         throw new IllegalArgumentException("Array is null or empty");
@@ -75,6 +85,10 @@ public class Map implements Map2D, Serializable{
 	}
 
 	@Override
+    /**
+     * Returns a deep copy of the map's grid.
+     * Changes to the returned array will not affect the map.
+     */
 	public int[][] getMap() {
 		int[][] ans = null;
         ans = new int[_w][_h];
@@ -124,6 +138,7 @@ public class Map implements Map2D, Serializable{
 
 	@Override
 	public void setPixel(Pixel2D p, int v) {
+        if (p == null) throw new IllegalArgumentException("Pixel cannot be null");
         int x = p.getX();
         int y = p.getY();
         if (x < 0 || y < 0 || x >= _w || y >= _h) {
@@ -174,6 +189,14 @@ public class Map implements Map2D, Serializable{
     }
 
     @Override
+    /**
+     * 1. Calculate new dimensions based on the scaling factors.
+     * 2. Create a new array for the resized map.
+     * 3. Iterate through every pixel of the NEW map:
+     * - Calculate the corresponding source coordinate: source = current / scale.
+     * - Copy the value from the source map to the new map.
+     * 4. Update the map's width, height, and data array.
+     */
     public void rescale(double sx, double sy) {
     int newW = (int) (_w * sx);
     int newH = (int) (_h * sy);
@@ -191,6 +214,12 @@ public class Map implements Map2D, Serializable{
     }
 
     @Override
+    /**
+     * 1. Iterate over the entire map grid (width x height).
+     * 2. For each pixel, calculate the Euclidean distance to the center.
+     * 3. Check condition: distance^2 < radius^2.
+     * 4. If true, set the pixel to the given color.
+     */
     public void drawCircle(Pixel2D center, double rad, int color) {
     for (int i = 0; i <_w; i++) {
         for (int j = 0; j < _h; j++) {
@@ -205,6 +234,16 @@ public class Map implements Map2D, Serializable{
     }
 
     @Override
+    /**
+     * 1. Handle special cases: vertical or horizontal lines (simple loops).
+     * 2. Calculate differences (dx, dy).
+     * 3. If the line is "shallow" (width >= height):
+     * - Iterate along the X-axis.
+     * - Calculate Y using linear equation y = mx + b.
+     * 4. If the line is "steep" (height > width):
+     * - Iterate along the Y-axis.
+     * - Calculate X using linear equation x = my + b.
+     */
     public void drawLine(Pixel2D p1, Pixel2D p2, int color) {
     int x1 = Math.min(p1.getX(), p2.getX());
     int x2 = Math.max(p2.getX(), p1.getX());
@@ -243,6 +282,13 @@ public class Map implements Map2D, Serializable{
     }
 
     @Override
+    /**
+     * 1. Calculate the Minimum and Maximum X and Y coordinates from the two input points.
+     * (This ensures the loop works correctly regardless of point order).
+     * 2. Iterate from minY to maxY.
+     * 3. Inside, iterate from minX to maxX.
+     * 4. Set every pixel in this range to the specified color.
+     */
     public void drawRect(Pixel2D p1, Pixel2D p2, int color) {
     int minX = Math.min(p1.getX(), p2.getX());
     int maxX = Math.max(p1.getX(), p2.getX());
@@ -286,7 +332,19 @@ public class Map implements Map2D, Serializable{
 	/** 
 	 * Fills this map with the new color (new_v) starting from p.
 	 * https://en.wikipedia.org/wiki/Flood_fill
-	 */
+     *
+     * Algorithm: Flood Fill using BFS.
+     * 1. Check if the start point is valid. If the target color is the same, return 0.
+     * 2. Initialize a queue and add the starting pixel. Change its color.
+     * 3. While the queue is not empty:
+     * a. Poll the current pixel.
+     * b. Check all 4 neighbors (up, down, left, right).
+     * c. If cyclic mode is on, wrap coordinates around the map.
+     * d. If a neighbor is valid and has the original color:
+     * - Update its color.
+     * - Add it to the queue.
+     * 4. Return the total count of colored pixels.
+     */
 	public int fill(Pixel2D xy, int new_v,  boolean cyclic) {
 		int ans = -1;
         if (!isInside(xy)) {
@@ -329,7 +387,18 @@ public class Map implements Map2D, Serializable{
 	/**
 	 * BFS like shortest the computation based on iterative raster implementation of BFS, see:
 	 * https://en.wikipedia.org/wiki/Breadth-first_search
-	 */
+	 *
+     * 1. Validate start/end points and ensure they are not obstacles.
+     * 2. Phase 1 - Distance Calculation:
+     * - Initialize a distance matrix with -1 (unvisited).
+     * - Run BFS from the start point to calculate distances to all reachable pixels.
+     * - Stop early if the target is reached.
+     * 3. Phase 2 - Path Reconstruction (Backtracking):
+     * - If target is unreachable, return null.
+     * - Start from the target and move to a neighbor with (current_distance - 1).
+     * - Repeat until the start point is reached.
+     * 4. Return the reconstructed path array.
+     */
 	public Pixel2D[] shortestPath(Pixel2D p1, Pixel2D p2, int obsColor, boolean cyclic) {
 		Pixel2D[] ans = null;
         if (!isInside(p1) || !isInside(p2)) {
@@ -403,6 +472,18 @@ public class Map implements Map2D, Serializable{
 	}
 
     @Override
+    /**
+     * Algorithm: Full Breadth-First Search (BFS).
+     * 1. Validate the start point. If invalid or an obstacle, return null.
+     * 2. Create a new result map initialized with -1.
+     * 3. Set the start point distance to 0 and add it to a queue.
+     * 4. While the queue is not empty:
+     * a. Poll the current pixel.
+     * b. For each valid neighbor (handling cyclic boundaries):
+     * - If unvisited, set distance = current_distance + 1.
+     * - Add neighbor to the queue.
+     * 5. Return the map containing distances from the start point.
+     */
     public Map2D allDistance(Pixel2D start, int obsColor, boolean cyclic) {
         Map2D ans = null;
         if (!isInside(start) || getPixel(start) == obsColor) {
