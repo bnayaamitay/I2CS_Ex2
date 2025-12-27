@@ -35,6 +35,7 @@ Beyond basic pathfinding, the application supports advanced map manipulations:
 
 ### 1. Algorithms in Action
 On the right: **Shortest Path** (Green) avoiding obstacles.
+ <br>
 On the left: **All Distances** view spreading from a center point.
 
 <div align="center">
