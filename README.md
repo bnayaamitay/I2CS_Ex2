@@ -46,12 +46,22 @@ On the left: **All Distances** view spreading from a center point.
 ### 2. Drawing Tools
 Demonstration of the drawing capabilities: Lines, Circles, and Rectangles.
 *(Menu open showing available shapes)*
-![Drawing Tools](images/shapes&fill.png)
+
+<div align="center">
+  <img src="images/shapes&fill.png" width="400" />
+  <br>
+  <em>Drawing Tools</em>
+</div>
 
 ### 3. Map Operations
 The system allows merging maps and rescaling.
 *(Menu open showing: Save, Merge, Rescale, New)*
-![Map Menu](images/map_functions.png)
+
+<div align="center">
+  <img src="images/map_functions.png" width="400" />
+  <br>
+  <em>Map Menu</em>
+</div>
 
 ---
 
