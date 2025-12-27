@@ -34,19 +34,19 @@ Beyond basic pathfinding, the application supports advanced map manipulations:
 ## 📷 Screenshots & Capabilities
 
 ### 1. Algorithms in Action
-On the left: **Shortest Path** (Green) avoiding obstacles.
-On the right: **All Distances** view spreading from a center point.
-![Algorithms Split View](images/algo_split_view.png)
+On the right: **Shortest Path** (Green) avoiding obstacles.
+On the left: **All Distances** view spreading from a center point.
+![Algorithms Split View](images/bfs_demo.png)
 
 ### 2. Drawing Tools
 Demonstration of the drawing capabilities: Lines, Circles, and Rectangles.
 *(Menu open showing available shapes)*
-![Drawing Tools](images/drawing_demo.png)
+![Drawing Tools](images/shapes&fill.png)
 
 ### 3. Map Operations
 The system allows merging maps and rescaling.
 *(Menu open showing: Save, Merge, Rescale, New)*
-![Map Menu](images/map_options.png)
+![Map Menu](images/map_functions.png)
 
 ---
 
