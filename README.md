@@ -36,7 +36,12 @@ Beyond basic pathfinding, the application supports advanced map manipulations:
 ### 1. Algorithms in Action
 On the right: **Shortest Path** (Green) avoiding obstacles.
 On the left: **All Distances** view spreading from a center point.
-![Algorithms Split View](images/bfs_demo.png)
+
+<div align="center">
+  <img src="images/bfs_demo.png" width="400" />
+  <br>
+  <em>Algorithms Split View</em>
+</div>
 
 ### 2. Drawing Tools
 Demonstration of the drawing capabilities: Lines, Circles, and Rectangles.
