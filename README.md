@@ -1,5 +1,7 @@
 # Ex2 - 2D Map & BFS Algorithms
 **Introduction to Computing | Ariel University**
+<br>
+**Student:** Bnaya Amitay | **ID:** 213741051
 
 ## 📝 Project Overview
 This project implements a generic **2D Map System** with a graphical user interface (GUI), designed using strict **Object-Oriented Programming (OOP)** principles.
